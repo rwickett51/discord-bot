@@ -12,11 +12,46 @@ const meme_api = require("./meme_api.json");
 // Import Music Command functions
 const music = require("./music");
 
+const dadjokes = require("./dadjokes.js");
+
 //Create Bot instince
 const self = new Discord.Client();
 
+async function diceRoll(msg) {
+  const content = msg.content.substring(config.prefix.length).split(" ");
+  if (content.length === 2) {
+    const diceAmount = content[1];
+    msg.channel.send(
+      (Math.floor(Math.random() * parseInt(content[1])) + 1).toString()
+    );
+  } else if (content.length === 3) {
+    const diceAmount = parseInt(content[1]);
+    const numberOfDice = parseInt(content[2]);
+    if (numberOfDice > 10) {
+      return msg.reply("Too many dice. Max Number is 10");
+    }
+    let message = `${numberOfDice}x d${diceAmount} - `;
+    let total = 0;
+    for (let i = 0; i < numberOfDice; i++) {
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          let value = Math.floor(Math.random() * diceAmount) + 1;
+          message += "`" + value.toString() + "` ";
+          total += value;
+          resolve();
+        }, 50);
+      });
+    }
+    message += "- **Total: **" + total;
+    msg.channel.send(message);
+  }
+}
+
 self.on("message", (msg) => {
-  if (msg.author.bot) return; //Check if bot created message
+  //Check if bot created message
+  if (msg.author.bot) {
+    return;
+  }
   if (msg.content[0] === config.prefix) {
     const content = msg.content.substring(config.prefix.length).split(" ");
     switch (content[0]) {
@@ -49,6 +84,12 @@ self.on("message", (msg) => {
         break;
       case "r":
         music.remove(msg);
+        break;
+      case "dad":
+        dadjokes.randomDadJoke(msg);
+        break;
+      case "d":
+        diceRoll(msg);
         break;
       default:
         msg.reply("Invalid Command");

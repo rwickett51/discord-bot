@@ -4,5 +4,6 @@
   "meme_api_edit_url": "https://api.imgflip.com/caption_image",
   "delimiter": ",",
   "default_user_role": "Degens",
-  "default_bot_role": "boot licker"
+  "default_bot_role": "boot licker",
+  "dad_joke_api_url": "https://dad-jokes.p.rapidapi.com/random/joke"
 }
