@@ -1,0 +1,8 @@
+{
+  "prefix": ".",
+  "meme_api_url": "https://api.imgflip.com/get_memes",
+  "meme_api_edit_url": "https://api.imgflip.com/caption_image",
+  "delimiter": ",",
+  "default_user_role": "Degens",
+  "default_bot_role": "boot licker"
+}

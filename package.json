@@ -1,0 +1,24 @@
+{
+  "name": "degen-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/opus": "github:discordjs/opus",
+    "discord.js": "^12.2.0",
+    "dotenv": "^10.0.0",
+    "ffmpeg": "0.0.4",
+    "ffmpeg-binaries": "^3.2.2",
+    "ffmpeg-static": "^4.3.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "node-fetch": "^2.6.0",
+    "youtube-search": "^1.1.4",
+    "ytdl-core": "^4.0.0"
+  },
+  "devDependencies": {}
+}
