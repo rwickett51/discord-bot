@@ -5,7 +5,7 @@ const Discord = require("discord.js");
 const fetch = require("node-fetch");
 
 //Grab JSONs
-const bot_login_token = require("./config.js").bot_login_token;
+const { bot_login_token, max_dice } = require("./config.js");
 const config = require("./config.json");
 const meme_api = require("./meme_api.json");
 
@@ -14,22 +14,34 @@ const music = require("./music");
 
 const dadjokes = require("./dadjokes.js");
 
-//Create Bot instince
+//Create Bot instance
 const self = new Discord.Client();
 
+/**
+ * Generates random dice and returns them as a message.
+ *
+ * @param {Object} msg User message object
+ * @returns
+ */
 async function diceRoll(msg) {
+  // Get message parameters
   const content = msg.content.substring(config.prefix.length).split(" ");
+
+  // If only 2 parameters, only generate 1 dice.
   if (content.length === 2) {
-    const diceAmount = content[1];
-    msg.channel.send(
-      (Math.floor(Math.random() * parseInt(content[1])) + 1).toString()
-    );
+    const diceAmount = parseInt(content[1]);
+    msg.channel.send((Math.floor(Math.random() * diceAmount) + 1).toString());
   } else if (content.length === 3) {
+    // Parse parameters
     const diceAmount = parseInt(content[1]);
     const numberOfDice = parseInt(content[2]);
-    if (numberOfDice > 10) {
-      return msg.reply("Too many dice. Max Number is 10");
+
+    // Set max number of dice
+    if (numberOfDice > max_dice) {
+      return msg.reply(`Too many dice. Max number is ${max_dice}`);
     }
+
+    // Conscruct dice message
     let message = `${numberOfDice}x d${diceAmount} - `;
     let total = 0;
     for (let i = 0; i < numberOfDice; i++) {
@@ -47,6 +59,9 @@ async function diceRoll(msg) {
   }
 }
 
+/**
+ * Event listener that prints whenever a message is posted.
+ */
 self.on("message", (msg) => {
   //Check if bot created message
   if (msg.author.bot) {
@@ -103,6 +118,9 @@ self.on("message", (msg) => {
 //  / ___ \ |_| | || (_) | | | (_) | |  __/
 // /_/   \_\__,_|\__\___/|_|  \___/|_|\___|
 
+/**
+ * Event listener that triggers when a new member joins a guild. Automatically assigns a role to them.
+ */
 self.on("guildMemberAdd", async (member) => {
   // Get Preffered Role Name (Human or Bot)
   rolename = config.default_user_role;
@@ -125,7 +143,9 @@ self.on("guildMemberAdd", async (member) => {
   });
 });
 
-//Upon Bot logging in
+/**
+ * Event listener that triggers when the bot successfully logs in.
+ */
 self.on("ready", () => {
   console.log(`Logged in as ${self.user.username}`);
   console.log(`Servers: ${self.guilds.cache.array().length}`);

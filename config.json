@@ -5,5 +5,6 @@
   "delimiter": ",",
   "default_user_role": "Degens",
   "default_bot_role": "boot licker",
-  "dad_joke_api_url": "https://dad-jokes.p.rapidapi.com/random/joke"
+  "dad_joke_api_url": "https://dad-jokes.p.rapidapi.com/random/joke",
+  "max_dice": 10
 }
