@@ -1,8 +1,10 @@
 # Ignore node modules
 node_modules/
+package-lock.json
+mongodata/
 
 # Ignore git
 .git
 
 # Ignore any md files
-*.md
+readme.md

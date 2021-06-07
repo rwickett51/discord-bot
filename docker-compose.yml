@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  node:
+    container_name: degenbot
+    build: .
+    volumes:
+      - .:/app
+
+    restart: always
+    depends_on:
+      - db
+  db:
+    container_name: discorddb
+    image: mongo:latest
+    ports:
+      - "27888:27017"
+    volumes:
+      - ./mongodata:/data/db
