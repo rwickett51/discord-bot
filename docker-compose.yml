@@ -12,7 +12,11 @@ services:
   db:
     container_name: discorddb
     image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
     ports:
-      - "27888:27017"
+      - 27017:27017
     volumes:
       - ./mongodata:/data/db

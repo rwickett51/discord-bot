@@ -5,14 +5,20 @@ const Discord = require("discord.js");
 const fetch = require("node-fetch");
 
 //Grab JSONs
-const { bot_login_token, max_dice } = require("./config.js");
+const { bot_login_token, max_dice, mongodb_uri } = require("./config.js");
 const config = require("./config.json");
-const meme_api = require("./meme_api.json");
+//const meme_api = require("./meme_api.json");
 
 // Import Music Command functions
 const music = require("./music");
 
 const dadjokes = require("./dadjokes.js");
+
+//Connect to MongoDB db
+const MongoClient = require("mongodb").MongoClient;
+const client = new MongoClient(mongodb_uri, {
+  useUnifiedTopology: true,
+});
 
 //Create Bot instance
 const self = new Discord.Client();
@@ -43,6 +49,7 @@ async function diceRoll(msg) {
 
     // Conscruct dice message
     let message = `${numberOfDice}x d${diceAmount} - `;
+    ssss;
     let total = 0;
     for (let i = 0; i < numberOfDice; i++) {
       await new Promise((resolve) => {
@@ -146,9 +153,17 @@ self.on("guildMemberAdd", async (member) => {
 /**
  * Event listener that triggers when the bot successfully logs in.
  */
-self.on("ready", () => {
+self.on("ready", async () => {
   console.log(`Logged in as ${self.user.username}`);
   console.log(`Servers: ${self.guilds.cache.array().length}`);
+
+  // Attempt to connect to MongoDB
+  try {
+    await client.connect();
+    console.log("Connected to DB");
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 // Login using token

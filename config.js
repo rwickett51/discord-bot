@@ -6,4 +6,5 @@ module.exports = {
   meme_api_username: process.env.MEME_USERNAME,
   meme_api_password: process.env.MEME_PASSWORD,
   dad_joke_api_key: process.env.DAD_JOKE_API_KEY,
+  mongodb_uri: process.env.MONGODB_URI,
 };
