@@ -5,7 +5,12 @@ const Discord = require("discord.js");
 const fetch = require("node-fetch");
 
 //Grab JSONs
-const { bot_login_token, max_dice, mongodb_uri } = require("./config.js");
+const {
+  bot_login_token,
+  max_dice,
+  default_user_role,
+  default_bot_role,
+} = require("./config.js");
 const config = require("./config.json");
 //const meme_api = require("./meme_api.json");
 
@@ -42,7 +47,7 @@ async function diceRoll(msg) {
       return msg.reply(`Too many dice. Max number is ${max_dice}`);
     }
 
-    // Conscruct dice message
+    // Construct dice message
     let message = `${numberOfDice}x d${diceAmount} - `;
     ssss;
     let total = 0;
@@ -124,25 +129,23 @@ self.on("message", (msg) => {
  * Event listener that triggers when a new member joins a guild. Automatically assigns a role to them.
  */
 self.on("guildMemberAdd", async (member) => {
-  // Get Preffered Role Name (Human or Bot)
-  rolename = config.default_user_role;
-  if (member.user.bot) {
-    rolename = config.default_bot_role;
-  }
+  // Get Preferred Role Name (Human or Bot)
+  const rolename = member.user.bot ? default_bot_role : default_user_role;
 
   // Fetch available roles on server
-  const roles = await member.guild.roles.fetch();
+  const guildRoles = await member.guild.roles.fetch();
 
-  roles.cache.forEach((role) => {
-    // If current role is of chosen role
-    if (role.name === rolename) {
-      userRoles = member._roles;
-      userRoles.push(role.id);
-      member.edit({
-        roles: userRoles,
-      });
-    }
-  });
+  // Get information about role to add
+  const [roleInfo] = guildRoles.cache.filter((role) => role.name === rolename);
+
+  // If role exists, add user to role
+  if (roleInfo !== undefined) {
+    let roles = member._roles;
+    roles.push(roleInfo.id);
+    member.edit({
+      roles,
+    });
+  }
 });
 
 /**
