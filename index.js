@@ -13,12 +13,7 @@ const config = require("./config.json");
 const music = require("./music");
 
 const dadjokes = require("./dadjokes.js");
-
-//Connect to MongoDB db
-const MongoClient = require("mongodb").MongoClient;
-const client = new MongoClient(mongodb_uri, {
-  useUnifiedTopology: true,
-});
+const database = require("./database.js");
 
 //Create Bot instance
 const self = new Discord.Client();
@@ -156,14 +151,6 @@ self.on("guildMemberAdd", async (member) => {
 self.on("ready", async () => {
   console.log(`Logged in as ${self.user.username}`);
   console.log(`Servers: ${self.guilds.cache.array().length}`);
-
-  // Attempt to connect to MongoDB
-  try {
-    await client.connect();
-    console.log("Connected to DB");
-  } catch (error) {
-    console.error(error);
-  }
 });
 
 // Login using token
