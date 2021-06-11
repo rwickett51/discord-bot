@@ -17,8 +17,9 @@ const config = require("./config.json");
 // Import Music Command functions
 const music = require("./music");
 
-const dadjokes = require("./dadjokes.js");
+const { randomDadJoke, GreetDad } = require("./dadjokes.js");
 const database = require("./database.js");
+const { randomCookie } = require("./fortune.js");
 
 //Create Bot instance
 const self = new Discord.Client();
@@ -113,10 +114,17 @@ self.on("message", (msg) => {
       case "d":
         diceRoll(msg);
         break;
+      case "fortune":
+        randomCookie(msg);
+        break;
       default:
         msg.reply("Invalid Command");
     }
+    return;
   }
+
+  // Parse user text for a dad joke opprotunity
+  GreetDad(msg);
 });
 
 //     _         _                  _

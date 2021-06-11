@@ -6,5 +6,6 @@
   "default_user_role": "Degens",
   "default_bot_role": "Boot Licking Peon",
   "dad_joke_api_url": "https://dad-jokes.p.rapidapi.com/random/joke",
-  "max_dice": 10
+  "max_dice": 10,
+  "fortune_cookie_url": "https://www.muppetlabs.de/api/?lang=en"
 }

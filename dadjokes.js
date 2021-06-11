@@ -89,4 +89,33 @@ async function FetchFromDatabase(dadjokesdb, data) {
   }
 }
 
-module.exports = { randomDadJoke };
+async function GreetDad(msg) {
+  const temp = msg.content.split(" ");
+  const lower = temp.map((str) => str.toLowerCase());
+
+  const name = getNameFromMessage(temp, lower);
+  if (name !== "") {
+    msg.reply(`Hey ${name}, I'm Dad`);
+  }
+}
+
+function getNameFromMessage(temp, lower) {
+  const splitters = ["i'm", "im"];
+
+  let index = temp.length + 1;
+  splitters.forEach((split) => {
+    const tempIndex = lower.indexOf(split);
+    if (tempIndex !== -1 && tempIndex < index) {
+      index = tempIndex;
+    }
+  });
+  if (index === temp.length + 1) {
+    return "";
+  }
+  return temp
+    .slice(index + 1, temp.length)
+    .join(" ")
+    .split(".")[0];
+}
+
+module.exports = { randomDadJoke, GreetDad };
