@@ -93,6 +93,8 @@ async function GreetDad(msg) {
   const temp = msg.content.split(" ");
   const lower = temp.map((str) => str.toLowerCase());
 
+  console.log(temp, lower);
+
   const name = getNameFromMessage(temp, lower);
   if (name !== "") {
     msg.reply(`Hey ${name}, I'm Dad`);
@@ -100,22 +102,23 @@ async function GreetDad(msg) {
 }
 
 function getNameFromMessage(temp, lower) {
-  const splitters = ["i'm", "im"];
+  const splitters = ["i'm", "im", "i’m"];
 
-  let index = temp.length + 1;
+  let index = temp.length;
   splitters.forEach((split) => {
     const tempIndex = lower.indexOf(split);
+    console.log("TempIndex: " + tempIndex);
     if (tempIndex !== -1 && tempIndex < index) {
-      index = tempIndex;
+      index = tempIndex + 1;
     }
   });
-  if (index === temp.length + 1) {
+
+  console.log("Earliest Index: " + index);
+  if (index === temp.length) {
     return "";
   }
-  return temp
-    .slice(index + 1, temp.length)
-    .join(" ")
-    .split(".")[0];
+
+  return temp.slice(index, temp.length).join(" ").split(".")[0];
 }
 
 module.exports = { randomDadJoke, GreetDad };

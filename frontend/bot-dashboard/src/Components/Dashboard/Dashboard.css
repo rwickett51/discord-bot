@@ -1,0 +1,44 @@
+.dashboard-container {
+  background-color: #dedede;
+  margin-left: 200px;
+}
+
+.dashboard-top {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.dashboard-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-areas:
+    "a a a"
+    "b c d";
+}
+
+.main-item {
+  background-color: white;
+  margin: 5px;
+  height: 600px;
+  border-radius: 3px;
+  box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.a {
+  grid-area: a;
+}
+.b {
+  grid-area: b;
+}
+.c {
+  grid-area: c;
+}
+.d {
+  grid-area: d;
+}
+.e {
+  grid-area: e;
+}

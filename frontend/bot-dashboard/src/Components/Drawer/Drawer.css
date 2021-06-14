@@ -1,0 +1,7 @@
+.drawer-main {
+  background-color: #1c4e80;
+  height: 100%;
+  width: 200px;
+  float: left;
+  position: fixed;
+}

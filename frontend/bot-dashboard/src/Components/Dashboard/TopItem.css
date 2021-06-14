@@ -1,0 +1,13 @@
+.dashboard-top-item {
+  padding-top: 5px;
+  padding-left: 10px;
+  /*Dividers*/
+  border-right: 1px solid #9a9a9a;
+  margin-bottom: 30px;
+}
+
+.dashboard-top-item-value {
+  font-size: 24px;
+  color: #1c4e80;
+  font-weight: bold;
+}
