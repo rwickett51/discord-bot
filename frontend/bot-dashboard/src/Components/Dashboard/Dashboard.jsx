@@ -2,6 +2,8 @@ import React from 'react'
 import "./Dashboard.css"
 
 import TopItem from './TopItem'
+import RequestsChart from './RequestsChart'
+import RequestDailyChart from './RequestsDailyChart'
 
 export default function Dashboard() {
     return (
@@ -15,8 +17,8 @@ export default function Dashboard() {
                 <TopItem type={6}/>
             </div>
             <div className="dashboard-main">
-                <div className="main-item a"></div>
-                <div className="main-item b"></div>
+                <div className="main-item a"><RequestsChart/></div>
+                <div className="main-item b"><RequestDailyChart/></div>
                 <div className="main-item c"></div>
                 <div className="main-item d"></div>
                 <div className="main-item e"></div>

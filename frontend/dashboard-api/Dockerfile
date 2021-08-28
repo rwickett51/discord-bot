@@ -1,4 +1,4 @@
-FROM node:lts
+FROM node:lts-alpine
 
 WORKDIR /app
 
@@ -13,4 +13,4 @@ RUN npm i --production \
 
 COPY . .
 
-CMD ["nodemon", "-L", "."]
+CMD ["npm", "start"]

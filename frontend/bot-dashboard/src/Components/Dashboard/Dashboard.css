@@ -13,13 +13,16 @@
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
   grid-template-areas:
-    "a a a"
-    "b c d";
+    "a a a a"
+    "b b c c"
+    "d d e e";
 }
 
 .main-item {
   background-color: white;
   margin: 5px;
+  padding-top: 5px;
+  padding-left: 10px;
   height: 600px;
   border-radius: 3px;
   box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.2);
@@ -27,6 +30,7 @@
   -moz-box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.2);
 }
 
+/*Dashboard Grid Items*/
 .a {
   grid-area: a;
 }

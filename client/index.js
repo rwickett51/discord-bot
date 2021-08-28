@@ -14,12 +14,16 @@ const {
 const config = require("./config.json");
 //const meme_api = require("./meme_api.json");
 
+const { performance } = require("perf_hooks");
+
 // Import Music Command functions
 const music = require("./music");
 
-const { randomDadJoke, GreetDad } = require("./dadjokes.js");
+const { randomDadJoke, GreetDad, getRoastedLeaderboard } = require("./dadjokes.js");
 const database = require("./database.js");
 const { randomCookie } = require("./fortune.js");
+const { getFullDate } = require("./util.js");
+const { type } = require("os");
 
 //Create Bot instance
 const self = new Discord.Client();
@@ -50,7 +54,6 @@ async function diceRoll(msg) {
 
     // Construct dice message
     let message = `${numberOfDice}x d${diceAmount} - `;
-    ssss;
     let total = 0;
     for (let i = 0; i < numberOfDice; i++) {
       await new Promise((resolve) => {
@@ -77,6 +80,14 @@ self.on("message", (msg) => {
   }
   if (msg.content[0] === config.prefix) {
     const content = msg.content.substring(config.prefix.length).split(" ");
+
+    // Analytics Values
+    const command = content[0];
+    const user_id = msg.member.id;
+    const t0 = performance.now();
+    const created_at = getFullDate();
+    let invalid = false;
+
     switch (content[0]) {
       case "crab":
         msg.channel.send(
@@ -109,7 +120,7 @@ self.on("message", (msg) => {
         music.remove(msg);
         break;
       case "dad":
-        dadjokes.randomDadJoke(msg);
+        randomDadJoke(msg);
         break;
       case "d":
         diceRoll(msg);
@@ -117,8 +128,29 @@ self.on("message", (msg) => {
       case "fortune":
         randomCookie(msg);
         break;
+      case "roasted":
+        getRoastedLeaderboard(msg, self)
+        break;
       default:
+        invalid = true;
         msg.reply("Invalid Command");
+    }
+    const t1 = performance.now();
+    const response_time = (t1 - t0) / 1000;
+    const analyticsObj = {
+      command,
+      response_time,
+      created_at,
+      invalid,
+    };
+    console.log(analyticsObj);
+
+    try {
+      const db = database.db("discordBot");
+      const requestsdb = db.collection("requests");
+      requestsdb.insertOne(analyticsObj);
+    } catch (error) {
+      console.error("Error adding analytics to database");
     }
     return;
   }
@@ -160,9 +192,83 @@ self.on("guildMemberAdd", async (member) => {
  * Event listener that triggers when the bot successfully logs in.
  */
 self.on("ready", async () => {
+  const servers = self.guilds.cache.array().length;
+  const startTime = new Date().toISOString();
+
   console.log(`Logged in as ${self.user.username}`);
-  console.log(`Servers: ${self.guilds.cache.array().length}`);
+  console.log(`Servers: ${servers}`);
+
+  // Set General Information
+  const users = self.guilds.cache
+    .map((guild) => guild.memberCount)
+    .reduce((total, count) => total + count);
+
+  setGeneralInformation(servers, startTime, users);
 });
+
+/**
+ *
+ * @param {number} servers number of servers bot services
+ * @param {String} startTime server start time in ISO format
+ * @param {number} users number of users bot services
+ */
+async function setGeneralInformation(servers, startTime, users) {
+  try {
+    // Get General Collection
+    const generaldb = database.db("discordBot").collection("general");
+
+    // Check if db contains document
+    const response = await generaldb.findOne({ id: "startUp" });
+    if (response === null) {
+      generaldb.insertOne({
+        servers,
+        startTime,
+        users,
+        id: "startUp",
+      });
+    } else {
+      generaldb.updateOne(
+        { id: "startUp" },
+        {
+          $set: { servers, startTime, users },
+        }
+      );
+    }
+  } catch (error) {
+    console.error("Error setting General Information:", error.message);
+  }
+}
+
+// self.on("voiceStateUpdate", async (oldState, newState) => {
+//   if (oldState.member.user.bot) return;
+
+//   const whitelist = ["858034325886468106"];
+
+//   if (newState.channelID === null) {
+//     console.log("user left channel", oldState.channelID);
+//     const channel = await self.channels.fetch(oldState.channelID);
+
+//     try {
+//       await channel.leave();
+//       console.log("Successfully disconnected.");
+//     } catch (error) {
+//       console.error(e);
+//     }
+//   } else if (oldState.channelID === null) {
+//     console.log("user joined channel", newState.channelID);
+//     const channel = await self.channels.fetch(newState.channelID);
+//     try {
+//       await channel.join();
+//       console.log("Successfully connected.");
+//     } catch (error) {
+//       console.error(e);
+//     }
+//   } else {
+//     console.log("user moved channels", oldState.channelID, newState.channelID);
+//   }
+// });
 
 // Login using token
 self.login(bot_login_token);
+
+module.exports = self;

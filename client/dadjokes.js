@@ -93,11 +93,56 @@ async function GreetDad(msg) {
   const temp = msg.content.split(" ");
   const lower = temp.map((str) => str.toLowerCase());
 
-  console.log(temp, lower);
-
   const name = getNameFromMessage(temp, lower);
   if (name !== "") {
     msg.reply(`Hey ${name}, I'm Dad`);
+
+    try {
+      const db = database.db("discordBot");
+      const roastdb = db.collection("roasted");
+      const entry = await roastdb.findOne({ id: msg.author.id });
+      if (entry === null) {
+        roastdb.insertOne({id: msg.author.id, count: 1});
+      } else {
+        roastdb.updateOne({id: msg.author.id}, {$inc: {count: 1}})
+      }
+      
+    } catch (error) {
+      console.error("Error adding analytics to database:", error.message);
+    }
+  }
+}
+
+function getRoastedLeaderboard(msg, client) {
+
+  const roastdb = database.db("discordBot").collection("roasted");
+  const pipeline = [
+  {
+    '$sort': {
+      'count': -1
+    }
+  }, {
+    '$limit': 5
+  }
+]
+
+  try  {
+    const roastdb = database.db("discordBot").collection("roasted");
+    roastdb.aggregate(pipeline, (error, data) => {
+      if (error) throw new Error(error);
+      const response = []
+      let stars = 5
+      const starEmoji = client.emojis.cache.find(emoji => emoji.name === "gtastar");
+      response.push('Most Wanted:')
+      data.forEach((d) => {
+        const x = `${`${starEmoji}`.repeat(stars)}\t\`${client.users.cache.get(d.id).tag.split("#")[0]}\` -- \`${d.count}\``
+        response.push(x)
+        stars--
+      }).then(() => msg.channel.send(response.join("\n")));
+      
+    });
+  } catch(error) {
+    console.error(error.message)
   }
 }
 
@@ -121,4 +166,4 @@ function getNameFromMessage(temp, lower) {
   return temp.slice(index, temp.length).join(" ").split(".")[0];
 }
 
-module.exports = { randomDadJoke, GreetDad };
+module.exports = { randomDadJoke, GreetDad, getRoastedLeaderboard };

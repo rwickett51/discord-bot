@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3"
 services:
   node:
     container_name: degenbot
@@ -11,7 +11,7 @@ services:
       - db
   db:
     container_name: discorddb
-    image: mongo:latest
+    image: mongo:4
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -20,5 +20,20 @@ services:
       - 27017:27017
     volumes:
       - ./mongodata:/data/db
-    logging:
-      driver: none
+    command: mongod --quiet --logpath /dev/null
+  dashboard:
+    container_name: botdashboard
+    build: ./frontend/bot-dashboard
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+  dashboardapi:
+    container_name: dashboardapi
+    build: ./frontend/dashboard-api
+    ports:
+      - 5000:5000
+    volumes:
+      - ./frontend/dashboard-api:/app
+    depends_on:
+      - db
