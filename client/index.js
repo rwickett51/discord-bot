@@ -131,6 +131,9 @@ self.on("message", (msg) => {
       case "roasted":
         getRoastedLeaderboard(msg, self)
         break;
+      case "pin":
+        PinMessage(msg)
+        break;
       default:
         invalid = true;
         msg.reply("Invalid Command");
@@ -143,7 +146,6 @@ self.on("message", (msg) => {
       created_at,
       invalid,
     };
-    console.log(analyticsObj);
 
     try {
       const db = database.db("discordBot");
@@ -158,6 +160,41 @@ self.on("message", (msg) => {
   // Parse user text for a dad joke opprotunity
   GreetDad(msg);
 });
+
+async function PinMessage(msg) {
+  const content = msg.content.split(' ')[1]
+  if (content === undefined && !content.includes('https://discord.com/channels/')) {
+    return msg.channel.send("Invalid discord channel link")
+  }
+  const [server, channel, post] = content.replace('https://discord.com/channels/', '').split('/')
+  console.log(server, channel, post)
+
+  if(channel !== msg.channel.id) {
+    return msg.channel.send("Message must be in same channel")
+  }
+
+  const parentID = msg.channel.parentID
+  if (!msg.guild.channels.cache.filter(channel => channel.type === 'text' && parentID === channel.parentID).map(txtChannel => txtChannel.name).includes('pins')) {
+    if (!msg.guild.me.permissions.has('MANAGE_CHANNELS')) {
+      return msg.channel.send("Bot does not have permission to create channel")
+    }
+    msg.guild.channels.create("pins", {type: "GUILD_TEXT", parent: parentID})
+  }
+
+  const message = await msg.channel.messages.fetch(post)
+  const [pinsChannel] = msg.guild.channels.cache.filter(channel => channel.type === 'text' && parentID === channel.parentID && channel.name === 'pins')
+  console.log(pinsChannel[1])
+
+
+  const d = message.createdAt
+  const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
+  const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
+  const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
+  const time = d.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+
+
+  pinsChannel[1].send(`Author: ${message.author.username} - \`Date: ${da}-${mo}-${ye}, ${time}\`\n` + message.content)
+}
 
 //     _         _                  _
 //    / \  _   _| |_ ___  _ __ ___ | | ___
